@@ -33,27 +33,33 @@ jobs:
       - name: Install Application Dependencies
         run: npm ci --prefix restful-booker-app
 
-      - name: Start Restful Booker API
+      - name: Start API and Verify Availability
         run: |
-          cd restful-booker-app
-          npm start > /tmp/restful-booker.log 2>&1 &
-          echo $! > /tmp/restful-booker.pid
+          nohup npm start --prefix "$GITHUB_WORKSPACE/restful-booker-app" > /tmp/restful-booker.log 2>&1 < /dev/null &
+          API_PID=$!
 
-      - name: Wait for API to Start
-        run: |
+          echo "Started API process with PID: $API_PID"
+
           for i in {1..30}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/ping)
+            echo "Checking API availability: attempt $i"
+
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/ping || true)
 
             if [ "$STATUS" = "201" ]; then
-              echo "Restful Booker API is running."
+              echo "Restful Booker API is running successfully."
               exit 0
             fi
 
             sleep 2
           done
 
-          echo "API failed to start. Server logs:"
+          echo "API failed to start."
+          echo "Server logs:"
           cat /tmp/restful-booker.log
+
+          echo "Running processes:"
+          ps aux | grep node
+
           exit 1
 
       - name: Install Python Dependencies
@@ -64,7 +70,7 @@ jobs:
       - name: Run API Automation Tests
         working-directory: level1-restful-booker
         env:
-          BASE_URL: http://localhost:3001
+          BASE_URL: http://127.0.0.1:3001
           TEST_ENV: GitHub Actions
         run: |
           mkdir -p reports
