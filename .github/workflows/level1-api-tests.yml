@@ -1,0 +1,72 @@
+name: Level 1 - Restful Booker API Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Assessment Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Clone Restful Booker Application
+        run: git clone --depth 1 https://github.com/mwinteringham/restful-booker.git restful-booker-app
+
+      - name: Install Application Dependencies
+        run: npm ci --prefix restful-booker-app
+
+      - name: Start Restful Booker API
+        run: |
+          nohup npm start --prefix restful-booker-app > /tmp/restful-booker.log 2>&1 &
+
+      - name: Wait for API to Start
+        run: |
+          for i in {1..30}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/ping)
+            if [ "$STATUS" = "201" ]; then
+              echo "Restful Booker API is running."
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/restful-booker.log
+          echo "API failed to start."
+          exit 1
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r level1-restful-booker/requirements.txt
+
+      - name: Run API Automation Tests
+        working-directory: level1-restful-booker
+        env:
+          BASE_URL: http://localhost:3001
+          TEST_ENV: GitHub Actions
+        run: |
+          mkdir -p reports
+          pytest -v --html=reports/report.html --self-contained-html
+
+      - name: Upload HTML Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: restful-booker-api-test-report
+          path: level1-restful-booker/reports/report.html
+          if-no-files-found: warn
