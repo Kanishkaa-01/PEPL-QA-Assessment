@@ -1,3 +1,5 @@
+# PEPL QA Assessment
+
 ## Project Overview
 
 This repository contains the solutions for the three-level Testing / QA technical assessment.
@@ -25,15 +27,28 @@ PEPL_QA_Assessment/
 │   └── requirements.txt
 │
 ├── level2-toolshop/
+│   ├── bug-reports/
+│   │   ├── BUG-001.md
+│   │   ├── ...
+│   │   └── BUG-011.md
+│   ├── screenshots/
+│   ├── tests/
+│   ├── utils/
+│   ├── conftest.py
+│   ├── pytest.ini
+│   ├── requirements.txt
+│   └── README.md
 │
 ├── level3-toml-fuzzing/
 │
 └── README.md
 ```
 
+---
+
 ## Level 1 – Restful Booker REST API
 
-**Status:** Completed
+**Status: Completed**
 
 ### Overview
 
@@ -171,26 +186,155 @@ GitHub Actions automatically:
 
 **Verified CI Execution:** 24 tests passed, 0 failed.
 
+---
+
 ## Level 2 – Toolshop Web Application
 
-**Status:** Not yet implemented.
+**Status: Completed**
 
-Planned scope:
+### Overview
 
-- Browser automation using Playwright.
-- Product listing and sorting.
-- Product search.
-- Product detail validation.
-- Shopping cart workflows.
-- Contact form testing.
-- Comparison between the bug-injected and reference applications.
-- Defect documentation with screenshots.
+Developed a browser-based automated testing framework using Python, Playwright and Pytest to test the Toolshop e-commerce web application.
+
+The testing approach compares two versions of the application:
+
+- **Reference application:** https://practicesoftwaretesting.com
+- **Bug-injected application:** https://with-bugs.practicesoftwaretesting.com
+
+The same automated test suite can be executed against both applications to identify differences in application behaviour and detect defects.
+
+### Features
+
+- Homepage and navigation validation.
+- Product listing validation.
+- Product search functionality.
+- Product sorting validation.
+- Product details page validation.
+- Add-to-cart functionality.
+- Shopping cart quantity update.
+- Shopping cart product removal.
+- Contact form field validation.
+- Contact form submission testing.
+- Configurable application base URL.
+- Automated comparison between reference and bug-injected applications.
+- Defect documentation with reproduction steps, expected and actual results, severity, and screenshots.
+
+### Bug Reports
+
+A total of **11 bug reports** are documented in:
+
+`level2-toolshop/bug-reports/`
+
+Screenshots supporting selected defects are available in:
+
+`level2-toolshop/screenshots/`
+
+### Technology Stack
+
+- Python 3.11
+- Playwright
+- pytest
+- pytest-playwright
+- pytest-html
+- Git and GitHub
+
+### Setup Instructions
+
+**1. Navigate to Level 2**
+
+From the repository root:
+
+```bash
+cd level2-toolshop
+```
+
+**2. Create a virtual environment**
+
+```bash
+python -m venv venv
+```
+
+**3. Activate the virtual environment**
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+**4. Install dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+**5. Install Playwright browser**
+
+```bash
+playwright install chromium
+```
+
+### Configure Application URL
+
+The test suite uses the reference application by default.
+
+To execute tests against the bug-injected application, set the `BASE_URL` environment variable.
+
+**Reference application – PowerShell**
+
+```powershell
+$env:BASE_URL="https://practicesoftwaretesting.com"
+```
+
+**Bug-injected application – PowerShell**
+
+```powershell
+$env:BASE_URL="https://with-bugs.practicesoftwaretesting.com"
+```
+
+### Run Automated Tests
+
+Run the complete test suite:
+
+```bash
+pytest -v
+```
+
+Run tests against the reference application:
+
+```powershell
+$env:BASE_URL="https://practicesoftwaretesting.com"
+pytest -v
+```
+
+Run tests against the bug-injected application:
+
+```powershell
+$env:BASE_URL="https://with-bugs.practicesoftwaretesting.com"
+pytest -v
+```
+
+### Generate HTML Test Report
+
+```bash
+pytest -v --html=reports/report.html --self-contained-html
+```
+
+The generated report will be available at:
+
+`level2-toolshop/reports/report.html`
+
+### Project Documentation
+
+Detailed setup instructions, test execution details and bug reports are available in the `level2-toolshop` directory.
+
+---
 
 ## Level 3 – TOML Differential Fuzzing
 
-**Status:** Not yet implemented.
+**Status: Not yet implemented**
 
-Planned scope:
+### Planned Scope
 
 - Differential testing using `toml` and Python's `tomllib`.
 - Property-based testing using Hypothesis.
