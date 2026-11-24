@@ -332,16 +332,101 @@ Detailed setup instructions, test execution details and bug reports are availabl
 
 ## Level 3 – TOML Differential Fuzzing
 
-**Status: Not yet implemented**
+**Status: Completed**
 
-### Planned Scope
+### Overview
 
-- Differential testing using `toml` and Python's `tomllib`.
+Developed a differential fuzzing test suite to identify inconsistencies and defects in the Python `toml` library (version 0.10.2) by comparing its behaviour with Python's built-in `tomllib` parser.
+
+The testing approach uses property-based testing with Hypothesis to generate TOML documents, validate serialization and parsing behaviour, and identify unexpected differences between the two implementations.
+
+### Features
+
 - Property-based testing using Hypothesis.
-- TOML document generation.
-- Parser behaviour comparison.
-- Failure minimization and defect analysis.
-- Bug reproduction and proposed fixes.
+- TOML document generation and round-trip validation.
+- Compatibility testing between `toml` and `tomllib`.
+- Differential testing for valid and malformed TOML documents.
+- Automatic failure minimization using Hypothesis.
+- Identification and documentation of five defects.
+- Minimized reproduction scripts for identified defects.
+- Root cause analysis of encoder and decoder issues.
+- Proposed encoder and decoder fixes with regression tests.
+
+### Bug Reports
+
+A total of five defects are documented in:
+
+`level3-toml-fuzzing/bug-reports/`
+
+Minimized reproduction cases are available in:
+
+`level3-toml-fuzzing/minimized-cases/`
+
+Root cause analysis is available in:
+
+`level3-toml-fuzzing/results/root-cause-analysis.md`
+
+### Proposed Fixes
+
+Proposed encoder and decoder fixes are available in:
+
+`level3-toml-fuzzing/fixes/`
+
+Regression tests are included to validate the proposed fixes independently.
+
+### Technology Stack
+
+- Python 3.11
+- toml 0.10.2
+- tomllib
+- Hypothesis
+- Pytest
+- Git and GitHub
+
+### Setup Instructions
+
+1. Navigate to Level 3
+
+```powershell
+cd level3-toml-fuzzing
+```
+
+2. Create a virtual environment
+
+```powershell
+python -m venv venv
+```
+
+3. Activate the virtual environment
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+4. Install dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### Run Automated Tests
+
+Run the complete test suite:
+
+```powershell
+pytest -v
+```
+
+### Test Results
+
+Latest verified test execution:
+
+- **9 passed**
+- **5 xfailed** (expected failures documenting known defects)
+
+The expected failures demonstrate reproducible issues in the original library.
 
 ---
 
